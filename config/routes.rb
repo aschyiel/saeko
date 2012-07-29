@@ -1,4 +1,9 @@
 Saeko::Application.routes.draw do
+  get "sudoku/solve"
+  get "sudoku/puzzle"
+
+  get "home/index"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -25,6 +30,17 @@ Saeko::Application.routes.draw do
   #     end
   #   end
 
+  resources :sudoku do
+    collection do
+      get 'solve'
+      get 'puzzle'
+    end
+    member do
+      get 'solve'
+      get 'puzzle'
+    end
+  end
+
   # Sample resource route with sub-resources:
   #   resources :products do
   #     resources :comments, :sales
@@ -49,6 +65,8 @@ Saeko::Application.routes.draw do
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   # root :to => 'welcome#index'
+
+  root :to => "home#index"    
 
   # See how all your routes lay out with "rake routes"
 
