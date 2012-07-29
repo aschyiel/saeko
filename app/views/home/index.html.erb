@@ -24,21 +24,31 @@ span.puzzle_label {
   padding-top: 5px;
   padding-bottom: 0px;
   font-weight: bold;
-  font-size: 16px;
   text-align: center;
   display: table-cell;
   overflow: hidden;
+
+  /*
   width: 38px;
+  font-size: 16px;
+  */
+
+  width: 53px;
+  font-size: 24px; 
 }
 
 input.puzzle_cell {
   color: blue;
   text-align: center;
   font-weight: bold;
-  font-size: 16px;
-  width: 32px;
   display: table-cell;
   overflow: hidden;
+
+  /*font-size: 16px;*/
+  /*width: 32px;*/
+
+  font-size: 24px;
+  width: 48px; 
 }
 
 /*
@@ -59,6 +69,54 @@ ul.puzzle_row li {
   display: inline-block;
   float: left;
 }
+
+/*
+* emulate our 3x3 boxes by using solid borders.
+*/ 
+#id_a3,
+#id_b3,
+#id_c3,
+#id_d3,
+#id_e3,
+#id_f3,
+#id_g3,
+#id_h3,
+#id_i3, 
+#id_a6,
+#id_b6,
+#id_c6,
+#id_d6,
+#id_e6,
+#id_f6,
+#id_g6,
+#id_h6,
+#id_i6  {
+  border-right: 4px solid black;
+  border-radius: 2px;
+}
+
+#id_c1,
+#id_c2,
+#id_c3,
+#id_c4,
+#id_c5,
+#id_c6,
+#id_c7,
+#id_c8,
+#id_c9,
+#id_f1,
+#id_f2,
+#id_f3,
+#id_f4,
+#id_f5,
+#id_f6,
+#id_f7,
+#id_f8,
+#id_f9 {
+  border-bottom: 4px solid black;
+  border-radius: 2px; 
+}
+
 
 </style>
 
@@ -87,6 +145,21 @@ var handle_document_ready = function() {
       clear_puzzle(); 
   }); 
 
+  $("#id_set_to_hardest").bind( 'click', function() {
+      set_puzzle_to_hardest(); 
+  }); 
+
+}
+
+/* 
+* preset our puzzle board to the word's "hardest" puzzle 
+* according to http://www.kristanix.com/sudokuepic/worlds-hardest-sudoku.php 
+*
+* TODO: query server instead of hard coding it.
+*
+*/
+var set_puzzle_to_hardest = function() {
+  clobber_puzzle( "100007090030020008009600500005300900010080002600004000300000010040000007007000300" );
 }
 
 /* clear our board to all zeroes. */
@@ -188,8 +261,8 @@ var get_cell_letter = function( i ) {
 
 </script> 
 
-<h1>Sudoku Puzzle Solver</h1>
-<p>Punch in your sudoku puzzle below (use "0" to represent empty spaces), and hit the "Solve Puzzle!" button to (well, you know) solve it.</p>
+<h1>Sudoku Solver</h1>
+<p>Now you too can solve <a href="http://www.kristanix.com/sudokuepic/worlds-hardest-sudoku.php">the world's "hardest" sudoku puzzle(s)</a> within milliseconds.  Just punch in your sudoku puzzle below (use "0" to represent empty spaces), and hit the "Solve Puzzle!" button to (well, you know) solve it.</p>
 
 <!-- 
 *
@@ -231,5 +304,18 @@ var get_cell_letter = function( i ) {
   <% end %> 
 </div>
 
+<br/>
+<button id="id_set_to_hardest" type="button">Set to World's "Hardest"</button>
 <button id="id_solve_it" type="button">Solve Puzzle!</button>
 <button id="id_clear_it" type="button">Clear</button>
+
+<h2>credits</h2>
+<ul>
+  <li>
+    <a href="https://github.com/OdysseusLevy/sudoku">sudoku solver (clojure) code by Odysseus Levy.</a>
+  </li>
+  <li>
+    <a href="https://github.com/aschyiel/saeko">front-end code by Ulysses Levy.</a>
+  </li>
+</ul>
+
