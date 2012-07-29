@@ -58,7 +58,7 @@ class SudokuController < ApplicationController
   #
   def get_solution_to_puzzle( puzzle ) 
     jar_answer = exec_sudoku_jar( puzzle ); 
-    answer = jar_answer[1..-2];         #..drop brackets..  
+    answer = jar_answer[1..-3];         #..drop brackets, note: -3 due to trailing newline?..  
     answer = answer.split().join( '' ); 
     return answer;
   end

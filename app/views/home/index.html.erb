@@ -1,2 +1,47 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<!--
+* "index", uly, july2012
+*
+* This view serves as the landing page for our saeko site;
+* and functions as the user-interface to our sudoku solver (controller).
+*
+*
+-->
+
+<style>
+
+/* TODO, arrange text inputs into a 9x9 grid. */
+
+</style>
+
+<script type="text/javascript">
+
+$(document).ready( function(){ handle_document_ready(); } );
+
+var handle_document_ready = function() { 
+  console.debug( "..handle_document_ready.." );
+  $("#id_solve_it").bind( 'click', function() {
+    console.debug( "..solve_it button click handler.." );
+    var url = '<%= sudoku_solve_path %>' + '?puzzle=' + get_puzzle_as_string();
+    $.getJSON( url, function( data ) {
+      console.debug( "ajax data:"+data );
+
+      //..
+
+    }); 
+  }); 
+}
+
+/*
+* return a string of digits representation of our sudoku puzzle.
+*
+*/
+var get_puzzle_as_string = function() {
+//return "800000000003600000070090200050007000000045700000100030001000068008500010090000400"; // for testing only!
+}
+
+</script>
+
+<p id="id_debug" ></p>
+
+<button id="id_solve_it" type="button">Solve Puzzle</button>
+
