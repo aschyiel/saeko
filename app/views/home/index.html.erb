@@ -9,7 +9,56 @@
 
 <style>
 
-/* TODO, arrange text inputs into a 9x9 grid. */
+/* reset css */
+{
+  margin: 0;
+  padding: 0;
+} 
+p, h1 {
+  display: block;
+} 
+p, h1 {
+  padding-bottom: 22px;
+}
+span.puzzle_label {
+  padding-top: 5px;
+  padding-bottom: 0px;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  display: table-cell;
+  overflow: hidden;
+  width: 38px;
+}
+
+input.puzzle_cell {
+  color: blue;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  width: 32px;
+  display: table-cell;
+  overflow: hidden;
+}
+
+/*
+#id_solve_it {
+  text-align: center;
+}
+*/
+
+ul.puzzle_row {
+  text-align: center;
+  overflow: hidden;
+  list-style: none;
+  list-style-type: none;
+  margin: 0 auto;
+  padding: 0;
+} 
+ul.puzzle_row li {
+  display: inline-block;
+  float: left;
+}
 
 </style>
 
@@ -19,29 +68,168 @@ $(document).ready( function(){ handle_document_ready(); } );
 
 var handle_document_ready = function() { 
   console.debug( "..handle_document_ready.." );
+
   $("#id_solve_it").bind( 'click', function() {
     console.debug( "..solve_it button click handler.." );
+    $("#id_solve_it").attr( 'disabled', 'disabled' );
     var url = '<%= sudoku_solve_path %>' + '?puzzle=' + get_puzzle_as_string();
     $.getJSON( url, function( data ) {
       console.debug( "ajax data:"+data );
+      
+      // note: as currently implemented, "data" is just the sudoku solution digit-string.
+      clobber_puzzle( data );
 
-      //..
-
+      $("#id_solve_it").removeAttr( 'disabled', 'disabled' );
     }); 
   }); 
+
+  $("#id_clear_it").bind( 'click', function() {
+      clear_puzzle(); 
+  }); 
+
+}
+
+/* clear our board to all zeroes. */
+var clear_puzzle = function() {
+  var li = []; 
+  for ( var i = 0; i < 81; i++ ) {
+    li.push( 0 );
+  } 
+  clobber_puzzle( li.join('') );
 }
 
 /*
-* return a string of digits representation of our sudoku puzzle.
+* read in a digit-string and
+* set the puzzle cell values for all 81 cells.
 *
+* assumes that cell_values is exactly 81 digits.
 */
-var get_puzzle_as_string = function() {
-//return "800000000003600000070090200050007000000045700000100030001000068008500010090000400"; // for testing only!
+var clobber_puzzle = function( cell_values ) {
+  var m, n, c, id, val,
+    ki = cell_values.split( '' );
+
+  for ( m = 1; m < 10; m++ ) {
+    c = get_cell_letter( m ); 
+    for ( n = 1; n < 10; n++ ) {
+      id = '#id_' + c + n;
+      val = ki.splice( 0, 1 );  //..aka reverse pop..
+      $(id).val( val );
+    }
+  }
+
 }
 
-</script>
+/*
+* return a string of digits representing our sudoku puzzle('s current state).
+*/
+var get_puzzle_as_string = function() {
+//return "800000000003600000070090200050007000000045700000100030001000068008500010090000400"; // for testing only!  
+  var li = [], 
+    n, m, c, id, val;
 
-<p id="id_debug" ></p>
+  for ( m = 1; m < 10; m++ ) {
+    c = get_cell_letter( m );
+    for ( n = 1; n < 10; n++ ) {
+      id = "#id_" + c + n; 
+      val = $( id ).val() || 0;
+      if ( isNaN( val ) ) {
+        val = 0;
+      } else if ( val > 9 || val < 0 ) {
+        val = 0;
+      }
+      li.push( val );
+    }
+  }
 
-<button id="id_solve_it" type="button">Solve Puzzle</button>
+  return li.join( '' ); 
+}
 
+/*
+* return a letter representation of an integer.
+* TODO: a more clever way of doing this would be converting it to a charcode, 
+* and doing a diff against 'a' like in straight-up java/c.
+*/
+var get_cell_letter = function( i ) {
+  var c = 'x';
+  switch ( i ) {
+    case 1:
+      c = 'a';
+      break;
+    case 2:
+      c = 'b';
+      break;
+    case 3:
+      c = 'c';
+      break;
+    case 4:
+      c = 'd';
+      break;
+    case 5:
+      c = 'e';
+      break;
+    case 6:
+      c = 'f';
+      break;
+    case 7:
+      c = 'g';
+      break;
+    case 8:
+      c = 'h';
+      break;
+    case 9:
+      c = 'i';
+      break; 
+    default:
+      break;
+  }
+
+  return c;
+}
+
+</script> 
+
+<h1>Sudoku Puzzle Solver</h1>
+<p>Punch in your sudoku puzzle below (use "0" to represent empty spaces), and hit the "Solve Puzzle!" button to (well, you know) solve it.</p>
+
+<!-- 
+*
+* use ruby to automagically draw our 81 puzzle-cell matrix.
+*
+-->
+<div id="id_puzzle" > 
+
+  <!-- "column" labels... -->
+  <ul class="puzzle_row even">
+    <li>
+      <span class="puzzle_label">*<!-- white space --></span>
+    </li>
+    <% (1..9).to_a.each do |n| %>
+      <li>
+        <span class="puzzle_label"><%= n %></span>
+      </li>
+    <% end %>
+  </ul>
+
+  <% ('a'..'i').to_a.each do |c| %>
+    <ul class="puzzle_row " >
+      <li>
+        <span class="puzzle_label"><%= c %></span>
+      </li>
+    <% (1..9).to_a.each do |n| %>
+      <li>
+        <input id="id_<%= c %><%= n %>" 
+          class="puzzle_cell" 
+          type="number" 
+          min=  "0" 
+          max=  "9"
+          step= "1"
+          value="0"
+          />
+      </li>
+    <% end %>
+    </ul>
+  <% end %> 
+</div>
+
+<button id="id_solve_it" type="button">Solve Puzzle!</button>
+<button id="id_clear_it" type="button">Clear</button>
