@@ -13,3 +13,9 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+*.swo
+**/*.swo
+*.swp
+**/*.swp
+*.bak
+**/*.bak
